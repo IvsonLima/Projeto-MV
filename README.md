@@ -22,5 +22,8 @@ The objective of this project is to implement a product catalog with Java and JP
 
 ##Observations
 
+To run the project, you must configure the oracle database and run the Programa.java class
+
+
 
 
