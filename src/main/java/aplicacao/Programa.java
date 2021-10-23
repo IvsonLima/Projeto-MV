@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 import dao.ContaClienteDAO;
 import dao.ContaClienteDAOimpl;
+import dao.EnderecoDAO;
+import dao.EnderecoDAOimpl;
 import dao.MovClientesDAO;
 import dao.MovClientesDAOimpl;
 import dao.PessoaFisicaDAO;
@@ -26,8 +28,9 @@ public class Programa {
 		Scanner ler = new Scanner(System.in);
 		PessoaFisicaDAO pessoaFisicaDao = new PessoaFisicaDAOimpl(JpaUtil.getEntityManager());
 		PessoaJuridicaDAO pessoaJuridicaDao = new PessoaJuridicaDAOimpl(JpaUtil.getEntityManager());
-		ContaClienteDAO contaCli = new ContaClienteDAOimpl(JpaUtil.getEntityManager());
-		MovClientesDAO movic = new MovClientesDAOimpl(JpaUtil.getEntityManager());
+		EnderecoDAO enderecoDAo = new EnderecoDAOimpl(JpaUtil.getEntityManager());
+		ContaClienteDAO contaCliDao = new ContaClienteDAOimpl(JpaUtil.getEntityManager());
+		MovClientesDAO movimDao = new MovClientesDAOimpl(JpaUtil.getEntityManager());
 
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 		Endereco endereco = new Endereco();
@@ -76,6 +79,7 @@ public class Programa {
 					pessoaFisica.setEmail(ler.next());
 					System.out.println("Data Nascimento: ");
 					pessoaFisica.setDataNascimento(ler.next());
+					pessoaFisica.setDataCadastro(timeStamp);
 				} else {
 					System.out.println("Nome Fantasia: ");
 					pessoaJuridica.setNomeFantasia(ler.nextLine());
@@ -90,6 +94,8 @@ public class Programa {
 					pessoaJuridica.setValidadeInscricaoEst(ler.next());
 					System.out.println("Telefone: ");
 					pessoaJuridica.setFoneFax(ler.next());
+					pessoaJuridica.setDataCadastroPf(timeStamp);
+					
 
 				}
 				System.out.println("----------------- Cadastrar Endereço -----------------");
@@ -125,24 +131,47 @@ public class Programa {
 					double valor = ler.nextDouble();
 					contaCliente.setSaldoAtual(valor);
 					movi.setValorMov(valor);
+					contaCliente.setSaldoInicial(valor);
 					movi.setDataMov(timeStamp);
 				} else {
-					movi.setTpMov("R");
-					System.out.println("Digite o valor da movimentação: ");
-					double valor = ler.nextDouble();
-					contaCliente.setSaldoAtual(valor);
-					movi.setValorMov(valor);
-					movi.setDataMov(timeStamp);
+					try {
+						movi.setTpMov("R");
+						System.out.println("Digite o valor da movimentação: ");
+						double valor = ler.nextDouble();
+						contaCliente.setSaldoAtual(valor);
+						movi.setValorMov(valor);
+						contaCliente.setSaldoInicial(valor);
+						movi.setDataMov(timeStamp);
+					} finally {
+
+					}
+
 				}
-				pessoaFisica.setContaCliente(contaCliente);
-				pessoaFisica.setEndereco(endereco);
 				contaCliente.setDataAtualizacao(timeStamp);
-				contaCliente.setMovime(movi);
 				if (pessoaFisica.getCpf().isEmpty()) {
-					pessoaJuridicaDao.salvar(pessoaJuridica);
+					try {
+						movimDao.salvar(movi);
+						enderecoDAo.salvar(endereco);
+						contaCliDao.salvar(contaCliente);
+						pessoaJuridica.setEndereco(endereco);
+						pessoaJuridica.setContaCli(contaCliente);
+						pessoaJuridicaDao.salvar(pessoaJuridica);
+					} finally {
+
+					}
 				} else {
-					pessoaFisicaDao.salvar(pessoaFisica);
+					try {
+						movimDao.salvar(movi);
+						enderecoDAo.salvar(endereco);
+						contaCliDao.salvar(contaCliente);
+						pessoaFisica.setEndereco(endereco);
+						pessoaFisica.setContaCli(contaCliente);
+						pessoaFisicaDao.salvar(pessoaFisica);
+					} finally {
+
+					}
 				}
+				System.out.println("Cliente Cadastrado Com Sucesso!!");
 				break;
 
 			case 2:
@@ -212,11 +241,66 @@ public class Programa {
 				} else {
 					System.out.println("Digite o CNPJ: ");
 					ler.nextLine();
+					String cnpj = ler.nextLine();
+					PessoaJuridica pessoaJ = pessoaJuridicaDao.pesquisar(cnpj);
+					if (pessoaJ != null) {
+						int op = 0;
+						while (op != 4) {
+							System.out.println("-------------------------------------------------");
+							System.out.println("(1) - Alterar Dados: ");
+							System.out.println("(2) - Alterar Endereco ");
+							System.out.println("(3) - Alterar Conta: ");
+							System.out.println("(4) - Cancelar");
+							System.out.println("-------------------------------------------------");
+							int n = ler.nextInt();
 
+							switch (n) {
+							case 1:
+								System.out.println("-------------------------------------------------");
+								System.out.println("Nome Fantasia: ");
+								pessoaJuridica.setNomeFantasia(ler.nextLine());
+								ler.nextLine();
+								System.out.println("CNPJ: ");
+								pessoaJuridica.setCnpj(ler.next());
+								System.out.println("Inscrição Estadual: ");
+								pessoaJuridica.setInscricaoEstadual(ler.next());
+								System.out.println("Inscrição Municipal: ");
+								pessoaJuridica.setFoneFax(ler.next());
+								System.out.println("Validade da Inscrição Municipal: ");
+								pessoaJuridica.setValidadeInscricaoEst(ler.next());
+								System.out.println("Telefone: ");
+								pessoaJuridica.setFoneFax(ler.next());
+								break;
+
+							case 2:
+								System.out.println("-----------------Alterar Endereco -----------------");
+								System.out.println("Rua: ");
+								ler.nextLine();
+								endereco.setRua(ler.nextLine());
+								System.out.println("Número: ");
+								endereco.setNumero(ler.nextInt());
+								System.out.println("Complemento: ");
+								ler.nextLine();
+								endereco.setComplemento(ler.nextLine());
+								System.out.println("Bairro: ");
+								endereco.setBairro(ler.nextLine());
+								System.out.println("Cidade: ");
+								endereco.setCidade(ler.nextLine());
+								System.out.println("UF: ");
+								endereco.setUf(ler.next());
+								System.out.println("Cep: ");
+								endereco.setCep(ler.next());
+								break;
+
+							}
+						}
+					} else {
+						System.out.println("CNPJ Inválido");
+					}
 				}
 
 			case 3:
-				System.out.println("----------------- Alterar Dados do Cliente -----------------");
+				System.out.println("----------------- Excluir Cliente -----------------");
 				System.out.println("Digite (1) - Pessoa Física ");
 				System.out.println("Digite (2) - Pessoa Jurídica ");
 				int n1 = ler.nextInt();
@@ -231,7 +315,7 @@ public class Programa {
 					PessoaJuridica p1 = pessoaJuridicaDao.pesquisar(cnpj1);
 					pessoaJuridicaDao.remover(p1);
 				}
-
+				System.out.println("Cliente Removido Com Sucesso!!");
 				break;
 
 			case 4:
@@ -255,7 +339,7 @@ public class Programa {
 					String cnpjCli = ler.nextLine();
 					PessoaJuridica pessoa = pessoaJuridicaDao.pesquisar(cnpjCli);
 					if (pessoa != null) {
-						pessoa.toString();
+						pessoa.imprimir();
 					} else {
 						System.out.println("CNPJ Inválido !");
 					}
@@ -264,11 +348,94 @@ public class Programa {
 				break;
 
 			case 5:
-				System.out.println("Cadastrar Movimentação");
+				System.out.println("--------------Cadastrar Movimentação---------------");
+				System.out.println("Digite (1) - Pessoa Física ");
+				System.out.println("Digite (2) - Pessoa Jurídica ");
+				int num6 = ler.nextInt();
+				if (num6 == 1) {
+					System.out.println("Digite o CPF");
+					ler.nextLine();
+					String cpf1 = ler.nextLine();
+					PessoaFisica p1 = pessoaFisicaDao.pesquisar(cpf1);
+					if (p1 != null) {
+						p1.imprimir();
+						System.out.println("--------------------------------------------------------------");
+						System.out.println("Digite o número da conta que deseja realizar a movimentação:");
+						int numConta = ler.nextInt();
+						ContaCliente cdConta = contaCliDao.pesquisar(numConta);
+						if (cdConta != null) {
+							System.out.println("Digite: (1) - Movimentação de Despesa");
+							System.out.println("Digite: (2) - Movimentação de Receita");
+							int mov2 = ler.nextInt();
+							if (mov2 == 1) {
+								try {
+									System.out.println("Digite o valor da movimentação");
+									double movConta = ler.nextDouble();
+									movi.setValorMov(movConta);
+									movi.setDataMov(timeStamp);
+									movi.setNumeroConta(numConta);
+									movi.setTpMov("D");
+									movimDao.salvar(movi);
+								} finally {
+
+								}
+							} else {
+								try {
+								System.out.println("Digite o valor da movimentação");
+								double movConta = ler.nextDouble();
+								movi.setValorMov(movConta);
+								movi.setDataMov(timeStamp);
+								movi.setNumeroConta(numConta);
+								movi.setTpMov("R");
+								movimDao.salvar(movi);
+								} finally {
+									
+								}
+							}
+							System.out.println("Movimentação Cadastrada com Sucesso!!!");
+						} else {
+							System.out.println("Conta inválida!!");
+						}
+					}
+				} else {
+					System.out.println("Digite o CNPJ");
+					ler.nextLine();
+					String cnpj1 = ler.nextLine();
+					PessoaJuridica p1 = pessoaJuridicaDao.pesquisar(cnpj1);
+					if (p1 != null) {
+						p1.imprimir();
+						System.out.println("--------------------------------------------------------------");
+						System.out.println("Digite o número da conta que deseja realizar a movimentação:");
+						int numConta = ler.nextInt();
+						ContaCliente cdConta = contaCliDao.pesquisar(numConta);
+						if (cdConta != null) {
+							System.out.println("Digite: (1) - Movimentação de Despesa");
+							System.out.println("Digite: (2) - Movimentação de Receita");
+							int mov2 = ler.nextInt();
+							if (mov2 == 1) {
+								try {
+									System.out.println("Digite o valor da movimentação");
+									double movConta = ler.nextDouble();
+									movi.setValorMov(movConta);
+									movi.setDataMov(timeStamp);
+									movi.setNumeroConta(numConta);
+									movi.setTpMov("D");
+									movimDao.salvar(movi);
+								} finally {
+
+								}
+							}
+						}
+					} else {
+						System.out.println("CNPJ Inválido!!!");
+					}
+				}
+
 				break;
 
 			case 6:
 				System.out.println("Relatório de saldo do cliente X");
+				pessoaFisicaDao.resultquery();
 				break;
 
 			case 7:

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 
 import dominio.PessoaFisica;
 
@@ -51,6 +52,31 @@ public class PessoaFisicaDAOimpl implements PessoaFisicaDAO {
 	public List<PessoaFisica> recuperarTodos() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	public void resultquery() {
+		Query q = em.createNativeQuery("SELECT  pf.nome,\r\n"
+				+ "                pf.data_cadastro,\r\n"
+				+ "                en.rua,\r\n"
+				+ "                en.numero,\r\n"
+				+ "                en.complemento,\r\n"
+				+ "                en.bairro,\r\n"
+				+ "                en.cidade,\r\n"
+				+ "                en.uf,\r\n"
+				+ "                en.cep\r\n"
+				+ "FROM   pessoa_fisica pf,\r\n"
+				+ "       endereco en,\r\n"
+				+ "       conta_cliente cc,\r\n"
+				+ "       mov_clientes movic\r\n"
+				+ "WHERE  cpf = '11765876'\r\n"
+				+ "       AND tp_mov = 'D'\r\n"
+				+ "       AND pf.endereco_id_endereco = en.id_endereco");
+		
+		List<Object[]> obj = q.getResultList();
+		for (Object[] objects : obj) {
+			System.out.println("Nome:" + objects[0]);
+			
+		}
 	}
 
 }

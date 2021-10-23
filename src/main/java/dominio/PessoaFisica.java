@@ -2,12 +2,11 @@ package dominio;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -18,12 +17,9 @@ public class PessoaFisica implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
 	@Column(name = "ID_CLIENTE_PF")
 	@GeneratedValue(generator = "ID_CLIENTE_PF")
-	@SequenceGenerator(name = "ID_CLIENTE_PF", 
-					   sequenceName = "ID_CLIENTE_PF", 
-					   allocationSize = 1)
+	@SequenceGenerator(name = "ID_CLIENTE_PF", sequenceName = "ID_CLIENTE_PF", allocationSize = 0)
 	private Long id;
 
 	@Column(name = "NOME")
@@ -31,7 +27,8 @@ public class PessoaFisica implements Serializable {
 
 	@Column(name = "RG")
 	private String rg;
-	
+
+	@Id
 	@Column(name = "CPF")
 	private String cpf;
 
@@ -47,16 +44,43 @@ public class PessoaFisica implements Serializable {
 	@Column(name = "DATA_NASCIMENTO")
 	private String dataNascimento;
 	
-	@JoinColumn(name = "ID_CLIENTE_PF", referencedColumnName = "ID_ENDERECO")
-	@OneToOne(cascade = CascadeType.ALL)
-	private Endereco endereco;
+	@Column(name = "DATA_CADASTRO")
+	private String dataCadastro;
 	
-	@JoinColumn(name = "ID_CLIENTE_PF", referencedColumnName = "ID_CLIENTE")
-	@OneToOne(cascade = CascadeType.ALL)
-	private ContaCliente contaCliente;
+	@OneToOne
+	private Endereco endereco;
+
+	@ManyToOne
+	private ContaCliente contaCli;
 
 	public PessoaFisica() {
 
+	}
+	
+	public String getDataCadastro() {
+		return dataCadastro;
+	}
+
+
+	public void setDataCadastro(String dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+
+	public ContaCliente getContaCli() {
+		return contaCli;
+	}
+
+	public void setContaCli(ContaCliente contaCli) {
+		this.contaCli = contaCli;
+	}
+
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
 	}
 
 	public static long getSerialversionuid() {
@@ -77,12 +101,20 @@ public class PessoaFisica implements Serializable {
 	}
 
 	public void imprimir() {
-		System.out.println("-----------------Pessoa-----------------------");
+		System.out.println("---------------------Cliente-----------------------");
 		System.out.println("Nome: " + this.nome + " CPF: " + this.cpf);
 		System.out.println("RG: " + this.rg + " Orgão Emissor: " + this.orgEmissor);
 		System.out.println("Telefone: " + this.telefone + " Email: " + this.email);
 		System.out.println("Data Nascimento: " + this.dataNascimento);
-		System.out.println("----------------------------------------------");
+		System.out.println("---------------------Endereço-----------------------");
+		System.out.println("Rua: " + this.endereco.getRua() + " Numero: " + this.endereco.getNumero());
+		System.out.println("Complemento: " + this.endereco.getComplemento() + " Bairro: " +this.endereco.getBairro());
+		System.out.println("Cidade: " + this.endereco.getCidade() + " UF: " +this.endereco.getUf());
+		System.out.println("CEP: " + this.endereco.getCep());
+		System.out.println("----------------------Contas------------------------");
+		System.out.println("Numero: " + this.contaCli.getNumero() + " Saldo: " + this.contaCli.getSaldoAtual());
+		System.out.println("Ultima Atualização: " + this.contaCli.getDataAtualizacao());
+		
 	}
 
 	public Long getId() {
@@ -150,20 +182,5 @@ public class PessoaFisica implements Serializable {
 	}
 	
 
-	public Endereco getEndereco() {
-		return endereco;
-	}
-
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
-	}
-
-	public ContaCliente getContaCliente() {
-		return contaCliente;
-	}
-
-	public void setContaCliente(ContaCliente contaCliente) {
-		this.contaCliente = contaCliente;
-	}
 
 }

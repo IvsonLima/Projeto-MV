@@ -11,5 +11,6 @@ public interface PessoaFisicaDAO {
 	public void remover (PessoaFisica pessoaFisica);
 	public PessoaFisica pesquisar (String  cpf);
 	public List<PessoaFisica> recuperarTodos();
+	public void resultquery();
 	
 }

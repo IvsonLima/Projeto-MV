@@ -2,11 +2,13 @@ package dao;
 
 import java.util.List;
 
+import dominio.ContaCliente;
+
 public interface ContaClienteDAO {
 
-	public void salvar (ContaClienteDAO contaCliente);
-	public void alterar (ContaClienteDAO contaCliente);
-	public void remover (ContaClienteDAO contaCliente);
-	public ContaClienteDAO pesquisar (int codConta);
-	public List<ContaClienteDAO> recuperarTodos();
+	public void salvar (ContaCliente contaCliente);
+	public void alterar (ContaCliente contaCliente);
+	public void remover (ContaCliente contaCliente);
+	public ContaCliente pesquisar (int codConta);
+	public List<ContaCliente> recuperarTodos();
 }

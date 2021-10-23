@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -18,9 +20,7 @@ public class Endereco implements Serializable {
 	@Id
 	@Column(name = "ID_ENDERECO")
 	@GeneratedValue(generator = "ID_ENDERECO")
-	@SequenceGenerator(name = "ID_ENDERECO", 
-					   sequenceName = "ID_ENDERECO", 
-					   allocationSize = 1)
+	@SequenceGenerator(name = "ID_ENDERECO", sequenceName = "ID_ENDERECO", allocationSize = 0)
 	private Long id;
 
 	@Column(name = "RUA")
@@ -38,7 +38,6 @@ public class Endereco implements Serializable {
 	@Column(name = "CIDADE")
 	private String cidade;
 
-	@Id
 	@Column(name = "UF")
 	private String uf;
 

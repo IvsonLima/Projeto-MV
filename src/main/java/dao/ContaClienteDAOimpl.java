@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import dominio.ContaCliente;
+
 public class ContaClienteDAOimpl implements ContaClienteDAO {
 
 	private EntityManager em;
@@ -14,15 +16,17 @@ public class ContaClienteDAOimpl implements ContaClienteDAO {
 		this.em = em;
 	}
 
-	public void salvar(ContaClienteDAO contaCliente) {
-		EntityTransaction tx =  em.getTransaction();
+	@Override
+	public void salvar(ContaCliente contaCliente) {
+		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		em.persist(contaCliente);
 		tx.commit();
 
 	}
 
-	public void alterar(ContaClienteDAO contaCliente) {
+	@Override
+	public void alterar(ContaCliente contaCliente) {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		em.merge(contaCliente);
@@ -30,7 +34,8 @@ public class ContaClienteDAOimpl implements ContaClienteDAO {
 
 	}
 
-	public void remover(ContaClienteDAO contaCliente) {
+	@Override
+	public void remover(ContaCliente contaCliente) {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		em.remove(contaCliente);
@@ -38,14 +43,14 @@ public class ContaClienteDAOimpl implements ContaClienteDAO {
 
 	}
 
-	public ContaClienteDAO pesquisar(int codConta) {
-		ContaClienteDAO contaCliente = em.find(ContaClienteDAO.class, codConta);
+	public ContaCliente pesquisar(int codConta) {
+		ContaCliente contaCliente = em.find(ContaCliente.class, codConta);
 		return contaCliente;
 	}
 
-	public List<ContaClienteDAO> recuperarTodos() {
+	public List<ContaCliente> recuperarTodos() {
 		Query query = em.createQuery("from CONTA_CLIENTE e");
-		List<ContaClienteDAO> contaCliente = query.getResultList();
+		List<ContaCliente> contaCliente = query.getResultList();
 		return contaCliente;
 	}
 

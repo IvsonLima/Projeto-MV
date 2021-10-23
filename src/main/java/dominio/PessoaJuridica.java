@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -15,17 +17,15 @@ public class PessoaJuridica implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
 	@Column(name = "ID_CLIENTE_PJ")
 	@GeneratedValue(generator = "ID_CLIENTE_PJ")
-	@SequenceGenerator(name = "ID_CLIENTE_PJ", 
-					   sequenceName = "ID_CLIENTE_PJ", 
-					   allocationSize = 1)
+	@SequenceGenerator(name = "ID_CLIENTE_PJ", sequenceName = "ID_CLIENTE_PJ", allocationSize = 0)
 	private Long id;
 
 	@Column(name = "NOME_FANTASIA")
 	private String nomeFantasia;
 
+	@Id
 	@Column(name = "CNPJ")
 	private String cnpj;
 
@@ -40,10 +40,39 @@ public class PessoaJuridica implements Serializable {
 
 	@Column(name = "FAX")
 	private String foneFax;
-	
-	
-	
 
+	@Column(name = "DATA_CADASTRO")
+	private String dataCadastroPf;
+
+	@OneToOne
+	private Endereco endereco;
+
+	@ManyToOne
+	private ContaCliente contaCli;
+
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public String getDataCadastroPf() {
+		return dataCadastroPf;
+	}
+
+	public void setDataCadastroPf(String dataCadastroPf) {
+		this.dataCadastroPf = dataCadastroPf;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
+
+	public ContaCliente getContaCli() {
+		return contaCli;
+	}
+
+	public void setContaCli(ContaCliente contaCli) {
+		this.contaCli = contaCli;
+	}
 
 	public PessoaJuridica(Long id, String nomeFantasia, String cnpj, String inscricaoEstadual,
 			String inscricaoMunicipal, String validadeInscricaoEst, String foneFax) {
@@ -56,7 +85,6 @@ public class PessoaJuridica implements Serializable {
 		this.validadeInscricaoEst = validadeInscricaoEst;
 		this.foneFax = foneFax;
 	}
-
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -122,11 +150,20 @@ public class PessoaJuridica implements Serializable {
 		this.foneFax = foneFax;
 	}
 
-	@Override
-	public String toString() {
-		return "PessoaJuridica [id=" + id + ", nomeFantasia=" + nomeFantasia + ", cnpj=" + cnpj + ", inscricaoEstadual="
-				+ inscricaoEstadual + ", inscricaoMunicipal=" + inscricaoMunicipal + ", validadeInscricaoEst="
-				+ validadeInscricaoEst + ", foneFax=" + foneFax + "]";
-	}
+	public void imprimir() {
+		System.out.println("---------------------Cliente-----------------------");
+		System.out.println("Nome: " + this.nomeFantasia + " CNPJ: " + this.cnpj);
+		System.out.println(
+				"Inscric. Estadual: " + this.inscricaoEstadual + " Inscric. Municipal " + this.inscricaoMunicipal);
+		System.out.println("Validade Insc. Estadual " + this.validadeInscricaoEst + " Fone: " + this.foneFax);
+		System.out.println("---------------------Endereço-----------------------");
+		System.out.println("Rua: " + this.endereco.getRua() + " Numero: " + this.endereco.getNumero());
+		System.out.println("Complemento: " + this.endereco.getComplemento() + " Bairro: " + this.endereco.getBairro());
+		System.out.println("Cidade: " + this.endereco.getCidade() + " UF: " + this.endereco.getUf());
+		System.out.println("CEP: " + this.endereco.getCep());
+		System.out.println("----------------------Contas------------------------");
+		System.out.println("Numero: " + this.contaCli.getNumero() + " Saldo: " + this.contaCli.getSaldoAtual());
+		System.out.println("Ultima Atualização: " + this.contaCli.getDataAtualizacao());
 
+	}
 }

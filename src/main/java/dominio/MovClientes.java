@@ -23,7 +23,7 @@ public class MovClientes implements Serializable {
 	@GeneratedValue(generator = "ID_MOVIMENTACAO")
 	@SequenceGenerator(name = "ID_MOVIMENTACAO", 
 					   sequenceName = "ID_MOVIMENTACAO", 
-					   allocationSize = 1)
+					   allocationSize = 0)
 	private Long id;
 
 	@Column(name = "DATA_MOVIMENTACAO")
